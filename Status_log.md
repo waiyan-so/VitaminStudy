@@ -32,6 +32,7 @@
 - **子任务清单**：
   - [x] `output/VitaminAdviser_Top10.html`（深色交互页，已发布为 artifact）
   - [x] `output/VitaminAdviser_Top10.xlsx`（总览公式、产品清单、比较指南、组合判断、重复风险）
+  - [x] 部署到 GitHub：仓库 waiyan-so/VitaminStudy（公开），Pages 网址 https://waiyan-so.github.io/VitaminStudy/（不含原始 CSV）
   - [ ] Excel 更新到 14 类并加英文（用户要求稍后再做）
   - [ ] 下一阶段：加入 NHMRC RDI/UL 剂量对照与 RACGP 要点
   - [ ] 下一阶段：价格与每日有效剂量成本
