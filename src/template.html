@@ -1,0 +1,265 @@
+<title>VitaminAdviser 补充品比较</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 药房货架标签 — 顶部成分标签栏切换视图，每个成分一张「说明书」页 + 可筛选货架表 */
+:root{
+  --bg:#0e1513; --surface:#141e1b; --raised:#1a2723; --line:#26362f;
+  --fg:#e4ebe7; --muted:#97a8a0; --faint:#6c7d75;
+  --accent:#e2ad55; --accent-soft:rgba(226,173,85,.14);
+  --good:#62c393; --maybe:#d8b65e; --hype:#dd8585;
+  --good-bg:rgba(98,195,147,.13); --maybe-bg:rgba(216,182,94,.13); --hype-bg:rgba(221,133,133,.13);
+  --f-display:"Noto Serif SC","Songti SC","SimSun",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.65;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:28px 14px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--f-display);font-size:clamp(26px,4vw,38px);line-height:1.25;margin:6px 0 8px;text-wrap:balance}
+.lede{color:var(--muted);max-width:68ch;margin:0}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabrow{display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:thin}
+.tab{flex:0 0 auto;font:inherit;font-size:14px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.tab .k{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-right:6px}
+.tab:hover{color:var(--fg);border-color:var(--faint)}
+.tab[aria-current="page"]{color:#14100a;background:var(--accent);border-color:var(--accent)}
+.tab[aria-current="page"] .k{color:#3a2a10}
+.tab .en{font-size:12px;opacity:.7}
+.ovbars .bar{grid-template-columns:minmax(160px,260px) 1fr 120px}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:26px 60px}
+section{margin-top:34px}
+h2{font-family:var(--f-display);font-size:24px;margin:0 0 4px;text-wrap:balance}
+h3{font-size:16px;margin:0 0 10px;font-weight:700}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.ing-head{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;border-bottom:1px solid var(--line);padding-bottom:20px}
+.ing-head h2{font-size:clamp(28px,4vw,40px)}
+.ing-head .en{font-family:var(--f-mono);color:var(--faint);font-size:13px;letter-spacing:.06em}
+.tagline{max-width:70ch;margin:8px 0 0;font-size:16px}
+.stats{display:flex;gap:22px;flex-wrap:wrap}
+.stat .n{font-family:var(--f-mono);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--accent);line-height:1.1}
+.stat .l{font-size:12px;color:var(--muted)}
+.testbox{margin-top:18px;background:var(--accent-soft);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 6px 6px 0;font-size:14px;max-width:90ch}
+.testbox b{color:var(--accent)}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.col{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.col.warn{border-color:rgba(221,133,133,.35)}
+.col ul{margin:0;padding-left:18px}
+.col li{margin-bottom:6px}
+.col li::marker{color:var(--faint)}
+.col.warn h3{color:var(--hype)}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.04em;background:var(--surface);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.form{font-weight:700;min-width:180px}
+td.fit{color:var(--muted);min-width:120px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.pill.good{color:var(--good);background:var(--good-bg)}
+.pill.maybe{color:var(--maybe);background:var(--maybe-bg)}
+.pill.hype{color:var(--hype);background:var(--hype-bg)}
+.combos{display:grid;gap:10px}
+.combo{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.combo .name{font-weight:700;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.combo p{margin:0;color:var(--fg)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:12px}
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:c}
+.checklist li{counter-increment:c;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start}
+.checklist li::before{content:counter(c);font-family:var(--f-mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;text-align:center;line-height:20px;height:22px;margin-top:2px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:minmax(120px,240px) 1fr 44px;gap:10px;align-items:center;font-size:13px;cursor:default}
+.bar .lab{color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{display:block;height:14px;background:var(--raised);border-radius:3px;position:relative}
+.bar .fill{display:block;height:100%;background:var(--accent);border-radius:0 4px 4px 0;min-width:2px}
+.bar .val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted);text-align:right}
+.bar:hover .fill{filter:brightness(1.15)}
+.bar:hover .lab{color:var(--accent)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;align-items:end}
+.filters label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:4px}
+.filters input,.filters select{font:inherit;font-size:14px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 10px;min-width:0}
+.filters input{width:220px;max-width:100%}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin-left:auto}
+.prod td{font-size:13px}
+.prod td.pn a{color:var(--fg);text-decoration:none;border-bottom:1px dotted var(--faint)}
+.prod td.pn a:hover{color:var(--accent);border-color:var(--accent)}
+.prod td.pn{min-width:260px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:12px}
+.role{font-size:11px;padding:1px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.role.main{border-color:var(--accent);color:var(--accent)}
+.prod .tblwrap{max-height:620px;overflow:auto}
+.food li,.myth li{margin-bottom:6px}
+.myth li::marker{content:"✕  ";color:var(--hype)}
+.food li::marker{color:var(--good)}
+.note{font-size:13px;color:var(--faint);max-width:90ch}
+.layers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.layer .no{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.layer h3{margin:4px 0 6px}
+.layer p{margin:0 0 8px;font-size:14px}
+.layer .eg{font-size:13px;color:var(--muted);margin:0}
+.ovbars .bar{grid-template-columns:minmax(120px,190px) 1fr 120px;cursor:pointer}
+.ovbars .val{text-align:left}
+.disclaimer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--faint)}
+@media (max-width:860px){.three,.two,.layers{grid-template-columns:1fr}.ing-head{grid-template-columns:1fr}.combo{grid-template-columns:1fr}}
+@media (max-width:520px){td.form{min-width:130px}.tblwrap table{min-width:560px}.prod table{min-width:900px}.bar{grid-template-columns:110px 1fr 36px}.ovbars .bar{grid-template-columns:100px 1fr 92px}.filters input{width:100%}.count{margin-left:0}}
+@media (prefers-reduced-motion:no-preference){.view{animation:fade .25s ease}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+
+<header class="top wrap">
+  <div class="eyebrow">VitaminAdviser · Chemist Warehouse 数据</div>
+  <h1>14 类常见补充品：怎么比较、谁适合</h1>
+  <p class="lede">从 1,094 个去重产品中按主成分分类，挑出最常见、最有名的 14 类。每一类拆成配方类型、成分形式、有效量标注和重复风险四层来比较，并附上「谁可能需要、什么情况、谁要谨慎」。</p>
+</header>
+<nav class="tabs" aria-label="成分"><div class="wrap tabrow" id="tabs"></div></nav>
+<main class="wrap" id="view"></main>
+<div class="wrap"><p class="disclaimer">本页用于研究与初步筛选，不能替代注册医生、药剂师或营养师的个别评估。本阶段未引用 NHMRC 摄入参考值与 RACGP 指引，也未比较价格。分类依据仅为产品名称，剂量与成分请以实际标签为准。</p></div>
+
+<script>
+const DATA = __DATA__;
+const G = DATA.guide, P = DATA.products, ORDER = DATA.order, OV = DATA.overview;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const VERD = {good:"合理组合", maybe:"看情况", hype:"多为营销"};
+const tabs = document.getElementById("tabs"), view = document.getElementById("view");
+
+function buildTabs(cur){
+  const items = [["overview","总览","00","Overview"], ...ORDER.map((k,i)=>[k, G[k].cn, String(i+1).padStart(2,"0"), G[k].en])];
+  tabs.innerHTML = items.map(([k,l,n,e]) => `<a class="tab" href="#${k}" ${k===cur?'aria-current="page"':''}><span class="k">${n}</span>${esc(l)} <span class="en">${esc(e)}</span></a>`).join("");
+  const a = tabs.querySelector('[aria-current="page"]'); if (a) a.scrollIntoView({block:"nearest",inline:"center"});
+}
+function bars(rows, max, cls=""){
+  return `<div class="bars ${cls}">` + rows.map(r => `<div class="bar" title="${esc(r[0])}：${r[1]}${r[3]?'（'+esc(r[3])+'）':''}" ${r[2]?`data-go="${r[2]}"`:''}>
+    <span class="lab">${esc(r[0])}</span><span class="track"><span class="fill" style="width:${(r[1]/max*100).toFixed(1)}%"></span></span><span class="val">${r[3]?esc(r[3]):r[1]}</span></div>`).join("") + `</div>`;
+}
+function ul(arr, cls=""){ return `<ul class="${cls}">` + arr.map(x=>`<li>${esc(x)}</li>`).join("") + `</ul>`; }
+
+function renderOverview(){
+  const rows = ORDER.map(k => [G[k].cn + " " + G[k].en, DATA.stats[k].total, k, `主 ${DATA.stats[k].primary} · 附加 ${DATA.stats[k].secondary}`]);
+  const max = Math.max(...rows.map(r=>r[1]));
+  view.innerHTML = `<div class="view">
+  <section style="margin-top:0">
+    <h2>14 类成分与产品数量</h2>
+    <p class="sub">「主」= 该成分是产品的主成分；「附加」= 作为组合的次要成分出现（例如「钙 + D3」中的 D3）。点击条形进入该成分。</p>
+    ${bars(rows, max, "ovbars")}
+    <p class="note" style="margin-top:12px">选取原则：前十按产品数量并保留葡萄糖胺（关节类代表）；第 11–14 类为锌、胶原蛋白、姜黄与助眠/放松。共 ${DATA.meta.unique} 个去重产品，剔除 ${DATA.meta.nonSupp} 个非补充品（蜂蜜、奶粉、营养饮料等）。</p>
+  </section>
+  <section>
+    <h2>比较方法：四层拆解</h2>
+    <p class="sub">同一成分的产品往往有几十个变体。按顺序拆解后，只在同一层级里比较。</p>
+    <div class="layers">${OV.layers.map((l,i)=>`<div class="layer"><div class="no">第 ${i+1} 层</div><h3>${esc(l[0])}</h3><p>${esc(l[1])}</p><p class="eg">${esc(l[2])}</p></div>`).join("")}</div>
+  </section>
+  <section>
+    <h2>最容易重复摄入的成分</h2>
+    <p class="sub">购买组合产品前，先把你正在吃的所有产品列出来，逐项检查下面这些成分。</p>
+    <div class="tblwrap"><table><thead><tr><th>成分</th><th>常藏在这些产品里</th><th>叠加的风险</th></tr></thead><tbody>
+    ${OV.overlap.map(r=>`<tr><td class="form">${esc(r[0])}</td><td>${esc(r[1])}</td><td class="fit">${esc(r[2])}</td></tr>`).join("")}
+    </tbody></table></div>
+  </section>
+  <section>
+    <h2>未入选的其他热门品类</h2>
+    <div class="tblwrap"><table><thead><tr><th>品类</th><th>产品数</th><th>说明</th></tr></thead><tbody>
+    ${OV.runnerup.map(r=>`<tr><td class="form">${esc(r[0])}</td><td class="mono">${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}
+    </tbody></table></div>
+  </section>
+  <section>
+    <h2>组合产品的判断标签</h2>
+    <div class="legend"><span><span class="pill good">合理组合</span> 成分之间有协同或同一人群常需要</span><span><span class="pill maybe">看情况</span> 对部分人合适，需看剂量与个人情况</span><span><span class="pill hype">多为营销</span> 附加成分剂量低或证据薄弱</span></div>
+  </section></div>`;
+  view.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => location.hash = b.dataset.go));
+}
+
+function renderIng(k){
+  const g = G[k], st = DATA.stats[k];
+  const items = P.filter(p => p.c === k || (p.t.includes(k) && !p.x));
+  const vmax = Math.max(1, ...st.variants.map(v=>v[1]));
+  const variants = [...new Set(items.map(p=>p.c===k?p.v:"附加于其他主成分"))];
+  const formats = [...new Set(items.map(p=>p.f))];
+  view.innerHTML = `<div class="view">
+  <div class="ing-head">
+    <div><div class="en">${esc(g.en)}</div><h2>${esc(g.cn)}</h2><p class="tagline">${esc(g.tagline)}</p></div>
+    <div class="stats">
+      <div class="stat"><div class="n">${st.primary}</div><div class="l">主成分产品</div></div>
+      <div class="stat"><div class="n">${st.secondary}</div><div class="l">作为附加成分</div></div>
+      <div class="stat"><div class="n">${st.variants.length}</div><div class="l">变体类型</div></div>
+    </div>
+  </div>
+  <div class="testbox"><b>是否先检查：</b>${esc(g.test)}</div>
+
+  <section>
+    <div class="three">
+      <div class="col"><h3>谁可能需要</h3>${ul(g.who)}</div>
+      <div class="col"><h3>什么情况下考虑</h3>${ul(g.when)}</div>
+      <div class="col warn"><h3>谁要谨慎 · 药物相互作用</h3>${ul(g.caution)}</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>成分形式比较</h2>
+    <p class="sub">同一营养素的不同形式，先选对形式，再比剂量。</p>
+    <div class="tblwrap"><table><thead><tr><th>形式</th><th>特点</th><th>较适合</th></tr></thead><tbody>
+    ${g.forms.map(f=>`<tr><td class="form">${esc(f[0])}</td><td>${esc(f[1])}</td><td class="fit">${esc(f[2])}</td></tr>`).join("")}
+    </tbody></table></div>
+  </section>
+
+  <section>
+    <h2>组合产品怎么看</h2>
+    <div class="combos">${g.combos.map(c=>`<div class="combo"><div class="name">${esc(c[0])}<span class="pill ${c[1]}">${VERD[c[1]]}</span></div><p>${esc(c[2])}</p></div>`).join("")}</div>
+  </section>
+
+  <section class="two">
+    <div><h2>比较清单</h2><p class="sub">拿起任意两个产品，按顺序对照标签。</p><ol class="checklist">${g.compare.map(x=>`<li><span>${esc(x)}</span></li>`).join("")}</ol></div>
+    <div><h2>本数据中的变体分布</h2><p class="sub">按产品名称归类的主成分产品数量。</p>${bars(st.variants.map(v=>[v[0],v[1]]), vmax)}</div>
+  </section>
+
+  <section class="two">
+    <div><h2>食物与生活方式替代</h2>${ul(g.food,"food")}</div>
+    <div><h2>常见误区</h2>${ul(g.myths,"myth")}</div>
+  </section>
+
+  <section class="prod">
+    <h2>产品清单</h2>
+    <p class="sub">点击产品名打开 Chemist Warehouse 页面。剂量列只来自产品名称，请以标签为准。</p>
+    <div class="filters">
+      <label for="q">搜索产品或品牌<input id="q" type="search" placeholder="例如 Swisse、Glycinate"></label>
+      <label for="fv">变体<select id="fv"><option value="">全部</option>${variants.map(v=>`<option>${esc(v)}</option>`).join("")}</select></label>
+      <label for="ff">剂型<select id="ff"><option value="">全部</option>${formats.map(v=>`<option>${esc(v)}</option>`).join("")}</select></label>
+      <label for="fr">角色<select id="fr"><option value="">全部</option><option value="m">主成分</option><option value="s">附加成分</option></select></label>
+      <label for="fs">排序<select id="fs"><option value="rv">评论数</option><option value="r">评分</option><option value="n">名称</option></select></label>
+      <span class="count" id="cnt"></span>
+    </div>
+    <div class="tblwrap"><table><thead><tr><th>产品</th><th>角色</th><th>变体</th><th>剂型</th><th>人群</th><th>名称标注剂量</th><th>粒数</th><th>评分</th></tr></thead><tbody id="pt"></tbody></table></div>
+  </section></div>`;
+
+  const q=view.querySelector("#q"), fv=view.querySelector("#fv"), ff=view.querySelector("#ff"), fr=view.querySelector("#fr"), fs=view.querySelector("#fs");
+  const pt=view.querySelector("#pt"), cnt=view.querySelector("#cnt");
+  function draw(){
+    const s=q.value.trim().toLowerCase();
+    let rows=items.map(p=>({...p, main:p.c===k, vv:p.c===k?p.v:"附加于其他主成分"}))
+      .filter(p=>(!s||p.n.toLowerCase().includes(s))&&(!fv.value||p.vv===fv.value)&&(!ff.value||p.f===ff.value)&&(!fr.value||(fr.value==="m")===p.main));
+    const key=fs.value;
+    rows.sort((a,b)=> key==="n" ? a.n.localeCompare(b.n) : ((b[key]??-1)-(a[key]??-1)) || ((b.rv??0)-(a.rv??0)));
+    cnt.textContent=`${rows.length} / ${items.length} 个产品`;
+    pt.innerHTML=rows.map(p=>`<tr>
+      <td class="pn"><a href="${esc(p.u)}" target="_blank" rel="noopener">${esc(p.n)}</a></td>
+      <td><span class="role ${p.main?'main':''}">${p.main?'主':'附加 · '+esc(G[p.c]?G[p.c].cn:'其他')}</span></td>
+      <td>${esc(p.vv)}</td><td>${esc(p.f)}</td><td>${esc(p.g)}</td>
+      <td class="mono">${esc(p.s)||'—'}</td><td class="mono">${p.q??'—'}</td>
+      <td class="mono">${p.r!=null?p.r.toFixed(1)+' <span style="color:var(--faint)">('+p.rv+')</span>':'—'}</td></tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted)">没有符合条件的产品，请调整筛选。</td></tr>`;
+  }
+  [q,fv,ff,fr,fs].forEach(el=>el.addEventListener("input",draw)); draw();
+}
+
+function route(){
+  let k=(location.hash||"").slice(1); if(!G[k]) k="overview";
+  buildTabs(k); k==="overview"?renderOverview():renderIng(k);
+  window.scrollTo({top:0});
+}
+window.addEventListener("hashchange",route); route();
+</script>
